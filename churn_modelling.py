@@ -1,5 +1,8 @@
+import pickle
+
 import pandas as pd
 from sklearn import ensemble, linear_model, metrics, neighbors, svm, tree
+from sklearn.externals import joblib
 from sklearn.model_selection import StratifiedKFold
 
 
@@ -27,10 +30,11 @@ class modelling(object):
             X = sc.transform(X)
             X = pd.DataFrame(sc.transform(
                 X), columns=df_model.drop(columns='Churn').columns)
+            pickle.dump(sc, open('scaler.pkl', 'wb'))
             return X, y
         else:
             X = df_model.values
-            sc = self.preproc_scaler(**kwargs)
+            sc = joblib.load('scaler.pkl')
             sc.fit(X)
             X = sc.transform(X)
             return pd.DataFrame(sc.transform(X), columns=df_model.columns)
